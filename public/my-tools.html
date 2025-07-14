@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediksi Gangguan Kejelasan Suara</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 450px;
+            min-height: 500px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 30px 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #4facfe;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .radio-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            display: none;
+        }
+
+        .radio-option label {
+            display: block;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            background: #4facfe;
+            color: white;
+            border-color: #4facfe;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn.secondary {
+            background: #6c757d;
+            font-size: 0.9rem;
+            padding: 10px;
+        }
+
+        .btn.danger {
+            background: #dc3545;
+            font-size: 0.9rem;
+            padding: 10px;
+        }
+
+        .btn.success {
+            background: #28a745;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .result.low-risk {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .result.high-risk {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .patient-list {
+            margin-top: 20px;
+        }
+
+        .patient-item {
+            background: #f8f9fa;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .patient-item:hover {
+            background: #e9ecef;
+            border-color: #4facfe;
+        }
+
+        .patient-item.selected {
+            background: #4facfe;
+            color: white;
+            border-color: #4facfe;
+        }
+
+        .patient-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .patient-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .patient-details {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .prediction-options {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-msg {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            width: auto;
+            display: inline-block;
+        }
+
+        .prediction-header {
+            background: #17a2b8;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+            }
+
+            .nav-btn {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎤 Prediksi Gangguan Kejelasan Suara</h1>
+            <p>Aplikasi Kesehatan Digital</p>
+            <div class="nav-buttons" id="navButtons" style="display: none;">
+                <button class="nav-btn" onclick="showSection('dashboard')">Dashboard</button>
+                <button class="nav-btn" onclick="showSection('addPatient')">Tambah Pasien</button>
+                <button class="nav-btn" onclick="showSection('patientList')">Daftar Pasien</button>
+                <button class="nav-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Login Section -->
+            <div id="loginSection" class="section active">
+                <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Login</h2>
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" placeholder="Masukkan username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" placeholder="Masukkan password">
+                </div>
+                <button class="btn" onclick="login()">Login</button>
+            </div>
+
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" class="section">
+                <div class="welcome-msg">
+                    Selamat datang, <span id="welcomeUser"></span>!
+                </div>
+                <div style="text-align: center; padding: 40px 20px;">
+                    <h3 style="color: #333; margin-bottom: 20px;">Pilih Menu</h3>
+                    <button class="btn" onclick="showSection('addPatient')" style="margin-bottom: 15px;">
+                        👤 Tambah Data Pasien
+                    </button>
+                    <button class="btn" onclick="showSection('patientList')">
+                        📋 Daftar Pasien
+                    </button>
+                </div>
+            </div>
+
+            <!-- Add Patient Section -->
+            <div id="addPatientSection" class="section">
+                <button class="back-btn" onclick="showSection('dashboard')">← Kembali</button>
+                <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Tambah Data Pasien</h2>
+                
+                <div class="form-group">
+                    <label for="patientName">Nama Pasien:</label>
+                    <input type="text" id="patientName" placeholder="Masukkan nama lengkap">
+                </div>
+                
+                <div class="form-group">
+                    <label for="patientAge">Usia:</label>
+                    <input type="number" id="patientAge" placeholder="Masukkan usia">
+                </div>
+                
+                <div class="form-group">
+                    <label for="patientPhone">No. Telepon:</label>
+                    <input type="tel" id="patientPhone" placeholder="Masukkan nomor telepon">
+                </div>
+                
+                <div class="form-group">
+                    <label>Jenis Kelamin:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="patientMale" name="patientGender" value="male">
+                            <label for="patientMale">Laki-laki</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="patientFemale" name="patientGender" value="female">
+                            <label for="patientFemale">Perempuan</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tingkat Pendidikan:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="patientEduHigh" name="patientEducation" value="high">
+                            <label for="patientEduHigh">Tamat SMA</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="patientEduLow" name="patientEducation" value="low">
+                            <label for="patientEduLow">Tidak Tamat SMA</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn success" onclick="addPatient()">💾 Simpan Data Pasien</button>
+            </div>
+
+            <!-- Patient List Section -->
+            <div id="patientListSection" class="section">
+                <button class="back-btn" onclick="showSection('dashboard')">← Kembali</button>
+                <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Daftar Pasien</h2>
+                
+                <div id="patientListContainer">
+                    <p style="text-align: center; color: #666; font-style: italic;">Belum ada data pasien.</p>
+                </div>
+            </div>
+
+            <!-- Prediction Options Section -->
+            <div id="predictionOptionsSection" class="section">
+                <button class="back-btn" onclick="showSection('patientList')">← Kembali ke Daftar Pasien</button>
+                <h2 style="text-align: center; margin-bottom: 20px; color: #333;">Pilih Jenis Prediksi</h2>
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <strong>Pasien: </strong><span id="selectedPatientName"></span><br>
+                    <strong>Usia: </strong><span id="selectedPatientAge"></span><br>
+                    <strong>Jenis Kelamin: </strong><span id="selectedPatientGender"></span><br>
+                    <strong>Pendidikan: </strong><span id="selectedPatientEducation"></span>
+                </div>
+
+                <button class="option-btn" onclick="showPrediction('duration')">
+                    🕒 Prediksi Risiko terhadap Durasi Suara
+                </button>
+                <button class="option-btn" onclick="showPrediction('frequency')">
+                    🎵 Prediksi Risiko terhadap Frekuensi Suara
+                </button>
+                <button class="option-btn" onclick="showPrediction('intensity')">
+                    🔊 Prediksi Risiko terhadap Intensitas Suara
+                </button>
+            </div>
+
+            <!-- Prediction Section -->
+            <div id="predictionSection" class="section">
+                <button class="back-btn" onclick="showSection('predictionOptions')">← Kembali</button>
+                <div id="predictionHeader" class="prediction-header">
+                    <h3 id="predictionTitle"></h3>
+                    <p>Pasien: <span id="predictionPatientName"></span></p>
+                </div>
+
+                <div id="predictionForm">
+                    <!-- Form akan diisi secara dinamis -->
+                </div>
+
+                <button class="btn" onclick="calculatePrediction()">🔍 Hitung Prediksi</button>
+                <div id="predictionResult" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Login credentials
+        const validCredentials = {
+            'admin': 'admin123',
+            'dokter': 'dokter123',
+            'perawat': 'perawat123'
+        };
+
+        let currentUser = null;
+        let selectedPatient = null;
+        let currentPredictionType = null;
+        let patients = []; // Database pasien (dalam implementasi nyata, ini akan disimpan di server)
+
+        // Prediksi configurations
+        const predictionConfigs = {
+            duration: {
+                title: 'Prediksi Risiko terhadap Durasi Suara',
+                icon: '🕒',
+                factors: [
+                    { 
+                        name: 'Jenis Kelamin', 
+                        fieldName: 'gender',
+                        options: ['Laki-laki', 'Perempuan'], 
+                        scores: [0, 11] 
+                    },
+                    { 
+                        name: 'Replika Rugae Palatina', 
+                        fieldName: 'rugae',
+                        options: ['Ada', 'Tidak Ada'], 
+                        scores: [0, 18] 
+                    },
+                    { 
+                        name: 'Delta (∆) Lebar Lengkung Rahang Bawah', 
+                        fieldName: 'delta',
+                        options: ['Adekuat', 'Tidak Adekuat'], 
+                        scores: [0, 10] 
+                    }
+                ],
+                threshold: 16,
+                riskLevels: {
+                    low: 'rendah',
+                    high: 'tinggi'
+                }
+            },
+            frequency: {
+                title: 'Prediksi Risiko terhadap Frekuensi Suara',
+                icon: '🎵',
+                factors: [
+                    { 
+                        name: 'Jenis Kelamin', 
+                        fieldName: 'gender',
+                        options: ['Laki-laki', 'Perempuan'], 
+                        scores: [0, -15] 
+                    },
+                    { 
+                        name: 'Retensi Gigi Tiruan Rahang Atas: Tahanan terhadap Tarikan Vertikal', 
+                        fieldName: 'retention',
+                        options: ['Tahanan Adekuat', 'Tidak Ada Tahanan'], 
+                        scores: [0, 10] 
+                    }
+                ],
+                threshold: -10,
+                riskLevels: {
+                    low: 'rendah',
+                    high: 'tinggi'
+                }
+            },
+            intensity: {
+                title: 'Prediksi Risiko terhadap Intensitas Suara',
+                icon: '🔊',
+                factors: [
+                    { 
+                        name: 'Tingkat Pendidikan', 
+                        fieldName: 'education',
+                        options: ['Tamat SMA', 'Tidak Tamat SMA'], 
+                        scores: [10, 0] 
+                    },
+                    { 
+                        name: 'Replika Rugae Palatina', 
+                        fieldName: 'rugae',
+                        options: ['Ada', 'Tidak Ada'], 
+                        scores: [23, 0] 
+                    }
+                ],
+                threshold: 17,
+                riskLevels: {
+                    low: 'rendah',
+                    high: 'tinggi'
+                }
+            }
+        };
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                alert('Mohon masukkan username dan password!');
+                return;
+            }
+
+            if (validCredentials[username] && validCredentials[username] === password) {
+                currentUser = username;
+                document.getElementById('welcomeUser').textContent = username;
+                document.getElementById('navButtons').style.display = 'flex';
+                showSection('dashboard');
+                
+                // Clear login form
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            } else {
+                alert('Username atau password salah!');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            selectedPatient = null;
+            currentPredictionType = null;
+            document.getElementById('navButtons').style.display = 'none';
+            showSection('loginSection');
+            clearAllForms();
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionName + 'Section').classList.add('active');
+            
+            // Update nav buttons
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Load patient list if needed
+            if (sectionName === 'patientList') {
+                loadPatientList();
+            }
+        }
+
+        function addPatient() {
+            const name = document.getElementById('patientName').value;
+            const age = document.getElementById('patientAge').value;
+            const phone = document.getElementById('patientPhone').value;
+            const gender = document.querySelector('input[name="patientGender"]:checked');
+            const education = document.querySelector('input[name="patientEducation"]:checked');
+
+            if (!name || !age || !phone || !gender || !education) {
+                alert('Mohon lengkapi semua data pasien!');
+                return;
+            }
+
+            const patient = {
+                id: Date.now(),
+                name: name,
+                age: parseInt(age),
+                phone: phone,
+                gender: gender.value,
+                genderText: gender.value === 'male' ? 'Laki-laki' : 'Perempuan',
+                education: education.value,
+                educationText: education.value === 'high' ? 'Tamat SMA' : 'Tidak Tamat SMA',
+                dateAdded: new Date().toLocaleDateString('id-ID')
+            };
+
+            patients.push(patient);
+            alert('Data pasien berhasil disimpan!');
+            clearPatientForm();
+            showSection('patientList');
+        }
+
+        function clearPatientForm() {
+            document.getElementById('patientName').value = '';
+            document.getElementById('patientAge').value = '';
+            document.getElementById('patientPhone').value = '';
+            document.querySelectorAll('input[name="patientGender"]').forEach(radio => radio.checked = false);
+            document.querySelectorAll('input[name="patientEducation"]').forEach(radio => radio.checked = false);
+        }
+
+        function loadPatientList() {
+            const container = document.getElementById('patientListContainer');
+            
+            if (patients.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">Belum ada data pasien.</p>';
+                return;
+            }
+
+            let html = '';
+            patients.forEach(patient => {
+                html += `
+                    <div class="patient-item" onclick="selectPatient(${patient.id})">
+                        <div class="patient-info">
+                            <div>
+                                <div class="patient-name">${patient.name}</div>
+                                <div class="patient-details">${patient.age} tahun • ${patient.genderText}</div>
+                                <div class="patient-details">📞 ${patient.phone}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.8rem; color: #666;">Ditambahkan:</div>
+                                <div style="font-size: 0.8rem; color: #666;">${patient.dateAdded}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function selectPatient(patientId) {
+            selectedPatient = patients.find(p => p.id === patientId);
+            
+            document.getElementById('selectedPatientName').textContent = selectedPatient.name;
+            document.getElementById('selectedPatientAge').textContent = selectedPatient.age + ' tahun';
+            document.getElementById('selectedPatientGender').textContent = selectedPatient.genderText;
+            document.getElementById('selectedPatientEducation').textContent = selectedPatient.educationText;
+            
+            showSection('predictionOptions');
+        }
+
+        function showPrediction(type) {
+            currentPredictionType = type;
+            const config = predictionConfigs[type];
+            
+            document.getElementById('predictionTitle').innerHTML = config.icon + ' ' + config.title;
+            document.getElementById('predictionPatientName').textContent = selectedPatient.name;
+            
+            // Generate prediction form
+            let formHtml = '';
+            config.factors.forEach((factor, index) => {
+                formHtml += `
+                    <div class="form-group">
+                        <label>${factor.name}:</label>
+                        <div class="radio-group">
+                `;
+                
+                factor.options.forEach((option, optIndex) => {
+                    const radioId = `factor${index}_${optIndex}`;
+                    formHtml += `
+                        <div class="radio-option">
+                            <input type="radio" id="${radioId}" name="factor${index}" value="${factor.scores[optIndex]}">
+                            <label for="${radioId}">${option}</label>
+                        </div>
+                    `;
+                });
+                
+                formHtml += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('predictionForm').innerHTML = formHtml;
+            document.getElementById('predictionResult').style.display = 'none';
+            
+            showSection('prediction');
+        }
+
+        function calculatePrediction() {
+            const config = predictionConfigs[currentPredictionType];
+            let totalScore = 0;
+            let allSelected = true;
+            
+            // Calculate scores from prediction factors
+            config.factors.forEach((factor, index) => {
+                const selected = document.querySelector(`input[name="factor${index}"]:checked`);
+                if (selected) {
+                    totalScore += parseInt(selected.value);
+                } else {
+                    allSelected = false;
+                }
+            });
+            
+            if (!allSelected) {
+                alert('Mohon lengkapi semua pilihan sebelum melakukan prediksi!');
+                return;
+            }
+            
+            // Determine risk level based on threshold
+            let riskLevel, riskClass, message;
+            
+            if (currentPredictionType === 'frequency') {
+                // For frequency prediction, threshold is -10
+                if (totalScore < config.threshold) {
+                    riskLevel = 'rendah';
+                    riskClass = 'low-risk';
+                } else {
+                    riskLevel = 'tinggi';
+                    riskClass = 'high-risk';
+                }
+            } else {
+                // For duration and intensity predictions, threshold is 16 and 17 respectively
+                if (totalScore < config.threshold) {
+                    riskLevel = 'rendah';
+                    riskClass = 'low-risk';
+                } else {
+                    riskLevel = 'tinggi';
+                    riskClass = 'high-risk';
+                }
+            }
+            
+            // Create result message
+            const predictionTypeText = currentPredictionType === 'duration' ? 'durasi' : 
+                                     currentPredictionType === 'frequency' ? 'frekuensi' : 'intensitas';
+            
+            message = `${selectedPatient.name} ini memiliki risiko ${riskLevel} untuk mengalami gangguan ${predictionTypeText} suara`;
+            
+            // Display result
+            const resultDiv = document.getElementById('predictionResult');
+            resultDiv.innerHTML = `
+                <h3>HASIL PREDIKSI</h3>
+                <p style="margin: 15px 0; font-size: 1.1rem; font-weight: 600;">${message}</p>
+                <p style="margin: 10px 0; font-size: 1rem;">Total Skor: ${totalScore}</p>
+                <p style="margin-top: 15px; font-weight: normal; font-size: 0.9rem; opacity: 0.8;">
+                    ${riskLevel === 'rendah' ? 
+                        'Disarankan untuk melakukan pemeriksaan rutin dan menjaga kesehatan vokal.' : 
+                        'Disarankan untuk segera konsultasi dengan dokter spesialis untuk evaluasi lebih lanjut.'}
+                </p>
+            `;
+            resultDiv.className = `result ${riskClass}`;
+            resultDiv.style.display = 'block';
+            
+            // Scroll to result
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearAllForms() {
+            clearPatientForm();
+            document.getElementById('predictionResult').style.display = 'none';
+            
+            // Clear all prediction form radio buttons
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                if (radio.name.startsWith('factor')) {
+                    radio.checked = false;
+                }
+            });
+        }
+
+        // Allow Enter key to submit login
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const currentSection = document.querySelector('.section.active');
+                if (currentSection && currentSection.id === 'loginSection') {
+                    login();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
